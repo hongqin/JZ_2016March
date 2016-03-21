@@ -7,6 +7,7 @@ output: html_document
 
 
 ```{r}
+rm(list = ls())
 setwd("~/github/JZ_2016March")
 library(xlsx)
 list.files()
@@ -55,6 +56,7 @@ tb2 = tb[, 2:end]
 row.names(tb2) = as.character(tb[,1])
 pTb = data.frame(matrix(ncol = 4, nrow = length(tb[,1])))
 names(pTb) = tb[target_index, 1]
+row.names(pTb) = tb[,1]
   
 for( j in 1:4 ) {
   x = t(tb2[target_index[j], ])
@@ -74,7 +76,15 @@ for( j in 1:4 ) {
 Generate report
 ```{r}
 tb3 = cbind( tb, pTb)
+write.xlsx(tb3, "_out.xlsx")
+tb3$flag = 'nonsig'
+tb3$flag = ifelse(tb3[,47]<0.05, 'sig', tb3$flag )
+tb3$flag = ifelse(tb3[,48]<0.05, 'sig', tb3$flag )
+tb3$flag = ifelse(tb3[,49]<0.05, 'sig', tb3$flag )
+tb3$flag = ifelse(tb3[,50]<0.05, 'sig', tb3$flag )
 
+tb3b = tb3[ tb3$flag == 'sig', ]
+write.csv(tb3b, "_out.05.csv")
 ```
 
 
