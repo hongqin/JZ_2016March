@@ -76,12 +76,16 @@ for( j in 1:4 ) {
 Generate report
 ```{r}
 tb3 = cbind( tb, pTb)
-write.xlsx(tb3, "_out.xlsx")
+#write.xlsx(tb3, "_out.xlsx")
 tb3$flag = 'nonsig'
-tb3$flag = ifelse(tb3[,47]<0.05, 'sig', tb3$flag )
-tb3$flag = ifelse(tb3[,48]<0.05, 'sig', tb3$flag )
-tb3$flag = ifelse(tb3[,49]<0.05, 'sig', tb3$flag )
-tb3$flag = ifelse(tb3[,50]<0.05, 'sig', tb3$flag )
+tb3$flag = ifelse(tb3[,47]<0.01, 'sig', tb3$flag )
+tb3$flag = ifelse(tb3[,48]<0.01, 'sig', tb3$flag )
+tb3$flag = ifelse(tb3[,49]<0.01, 'sig', tb3$flag )
+tb3$flag = ifelse(tb3[,50]<0.01, 'sig', tb3$flag )
+hist(tb3[,47])
+hist(tb3[,48])
+hist(tb3[,49])
+hist(tb3[,50])
 
 tb3b = tb3[ tb3$flag == 'sig', ]
 write.csv(tb3b, "_out.05.csv")
