@@ -1,0 +1,81 @@
+---
+title: "Lawrence 2015 data analysis"
+author: "h qin"
+date: "March 20, 2016"
+output: html_document
+---
+
+
+```{r}
+setwd("~/github/JZ_2016March")
+library(xlsx)
+list.files()
+tb = read.csv("v2_Lawrence 2015 triple negative breast cancer proteomic  expression.csv")
+str(tb)
+```
+
+Find PTK6 
+```{r}
+PTK6_index = grep("PTK6", tb[,1])
+tb[grep("PTK6", tb[,1]), ]
+```
+
+
+TryCatch: 
+http://stackoverflow.com/questions/8093914/skip-to-next-value-of-loop-upon-error-in-r-trycatch
+
+```{r}
+end = length(tb[1,])
+tb2 = tb[, 2:end]
+row.names(tb2) = as.character(tb[,1])
+tb$p = NA;
+
+x = t(tb2[PTK6_index,])
+for( i in   1: length(tb2[,1])) {
+   tryCatch( 
+     { m = lm( t(tb2[i,]) ~ x )
+       sm = summary(m)
+        result = 1 - pf(sm$fsta[1], sm$fsta[2], sm$fsta[3])
+        tb$p[i] = result
+     }, error = function(err) err
+    )
+}
+```
+
+Find PTK6 EphA2, EGFR
+
+```{r}
+target_names = c("PTK6", "EPHA2", "EGFR")
+target_index =  lapply( target_names, FUN=function(x)(grep(x, tb[,1])))
+target_index =  unlist( target_index )
+tb[target_index, 1]
+
+end = length(tb[1,])
+tb2 = tb[, 2:end]
+row.names(tb2) = as.character(tb[,1])
+pTb = data.frame(matrix(ncol = 4, nrow = length(tb[,1])))
+names(pTb) = tb[target_index, 1]
+  
+for( j in 1:4 ) {
+  x = t(tb2[target_index[j], ])
+  for( i in   1: length(tb2[,1])) {
+     tryCatch( 
+       { m = lm( t(tb2[i,]) ~ x )
+         sm = summary(m)
+          result = 1 - pf(sm$fsta[1], sm$fsta[2], sm$fsta[3])
+          pTb[i, j] = result
+       }, error = function(err) err
+      )
+  }
+}
+
+```
+
+Generate report
+```{r}
+tb3 = cbind( tb, pTb)
+
+```
+
+
+
