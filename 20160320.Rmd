@@ -88,7 +88,8 @@ hist(tb3[,49])
 hist(tb3[,50])
 
 tb3b = tb3[ tb3$flag == 'sig', ]
-write.csv(tb3b, "_out.05.csv")
+tb3b = tb3b[ ! is.na(tb3b$flag), ]
+write.csv(tb3b, "_out.01.csv")
 ```
 
 
